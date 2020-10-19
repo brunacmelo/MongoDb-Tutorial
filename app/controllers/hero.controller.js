@@ -1,22 +1,21 @@
   
 const db = require("../models");
-const Tutorial = db.tutorials;
+const Hero = db.heroes;
 
 exports.create = (req, res) => {
 
-  if (!req.body.title) {
-    res.status(400).send({ message: "Content can not be empty!" });
+  if (!req.body.name) {
+    res.status(400).send({ message: "Name can not be empty!" });
     return;
   }
 
-  const tutorial = new Tutorial({
-    title: req.body.title,
-    description: req.body.description,
-    published: req.body.published ? req.body.published : false
+  const hero = new Hero({
+    name: req.body.name,
+    power: req.body.power
   });
 
-  tutorial
-    .save(tutorial)
+  hero
+    .save(hero)
     .then(data => {
       res.send(data);
     })
@@ -29,10 +28,10 @@ exports.create = (req, res) => {
 };
 
 exports.findAll = (req, res) => {
-  const title = req.query.title;
-  var condition = title ? { title: { $regex: new RegExp(title), $options: "i" } } : {};
+  const name = req.query.name;
+  var condition = name ? { name: { $regex: new RegExp(name), $options: "i" } } : {};
 
-  Tutorial.find(condition)
+  Hero.find(condition)
     .then(data => {
       res.send(data);
     })
@@ -47,7 +46,7 @@ exports.findAll = (req, res) => {
 exports.findOne = (req, res) => {
   const id = req.params.id;
 
-  Tutorial.findById(id)
+  Hero.findById(id)
     .then(data => {
       if (!data)
         res.status(404).send({ message: "Not found Tutorial with id " + id });
@@ -69,7 +68,7 @@ exports.update = (req, res) => {
 
   const id = req.params.id;
 
-  Tutorial.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+  Hero.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -88,7 +87,7 @@ exports.delete = (req, res) => {
 
   const id = req.params.id;
 
-  Tutorial.findByIdAndRemove(id, { useFindAndModify: false })
+  Hero.findByIdAndRemove(id, { useFindAndModify: false })
     .then(data => {
       if (!data) {
         res.status(404).send({
@@ -108,7 +107,7 @@ exports.delete = (req, res) => {
 };
 
 exports.deleteAll = (req, res) => {
-  Tutorial.deleteMany({})
+  Hero.deleteMany({})
     .then(data => {
       res.send({
         message: `${data.deletedCount} Tutorials were deleted successfully!`
@@ -123,7 +122,7 @@ exports.deleteAll = (req, res) => {
 };
 
 exports.findAllPublished = (req, res) => {
-  Tutorial.find({ published: true })
+  Hero.find({ published: true })
     .then(data => {
       res.send(data);
     })
